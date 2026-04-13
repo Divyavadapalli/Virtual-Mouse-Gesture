@@ -1,72 +1,16 @@
-# Gesture-Controlled Real-Time AI Animation
-Exhibited at the Art Gallery of Ontario, March 2025
+Hand Gesture-Controlled Virtual Mouse & TouchDesigner Interface
+This project is a real-time, touchless human-computer interaction system that replaces traditional input devices — mouse and keyboard — with natural hand gestures captured through a standard webcam. It sits at the intersection of computer vision, AI-based hand tracking, and creative software integration.
 
-![ago-2](https://github.com/user-attachments/assets/6855c2f8-be48-4f7b-a03f-2973bc0dddc1)
+How It Works
+At its core, the system uses OpenCV for live video capture and frame processing, combined with cvzone's HandTrackingModule (built on Google's MediaPipe) to detect and track up to two hands simultaneously. Every frame, it identifies which fingers are raised and interprets specific finger combinations as commands — all in real time.
 
-HEADS UP: This project is in constant iteration. Mainly for the CVZone-Python side. Latest py iteration includes a gesture rule classifier snippet that switches from one text-prompt to another inside TD. (TouchDesigner file update not included yet).
+The system operates in three intelligent modes based on how many hands are visible:
 
-## Project Overview
-The Microscopic is a real-time generative AI system exhibited as a public video mapping installation. It merges multimodal user input with diffusion-based image generation to create immersive, reactive visuals. The project was designed to test how human gestures can condition and control AI imagery in live settings, using a custom pipeline that combines gesture recognition with a diffusion model conditioning.
+Right Hand (Mouse Mode): Raising the index and middle fingers together moves the mouse cursor across the screen, with smoothing applied to eliminate jitter. Raising only the index finger triggers a left click. Finger tip coordinates are mapped from the camera frame to full screen dimensions using interpolation, and coordinates are clamped to prevent crashes at screen edges.
 
-![ago-3](https://github.com/user-attachments/assets/0373b508-839f-4453-a435-9c500e7eee41)
+Left Hand (Gesture Mode): Different finger combinations — one, two, or three fingers — correspond to gestures that are broadcast as OSC messages to TouchDesigner, a node-based visual programming environment. This allows the user to switch between visual scenes, prompts, or interactive states without touching anything.
 
-## Objectives
-* Explore gesture-based control as a creative input for AI visual systems.
-* Investigate image conditioning using predefined animations and structure-aware prompts.
-* Demonstrate live integration between user input and Stable Diffusion using the [TouchDiffusion](https://github.com/olegchomp/TouchDiffusion) plugin for TouchDesigner.
+Both Hands (Zoom Mode): When both hands are detected, the system measures the distance between them. Spreading hands apart signals zoom-in; bringing them together signals zoom-out. This delta is normalized and sent continuously to TouchDesigner as a float value over OSC.
 
-## Gesture Control System
-This system implements a rule-based classifier using `cvzone.HandTrackingModule`, `OpenCV`, and `autopy` to translate webcam-captured hand landmarks into real-time interaction modes:
-
-## Modes Implemented:
-1. Virtual Mouse – Controls the mouse using the index fingertip position.
-2. Zoom Mode – Recognizes two-hand gestures to scale and reposition images.
-
-![ago-2-ezgif com-optimize](https://github.com/user-attachments/assets/f737ca69-64a9-4ec8-9107-a144e522c43d)
-
-## Key Libraries:
-* [cvzone](https://github.com/cvzone/cvzone)
-* OpenCV
-* autopy
-* socket (for UDP communication with TouchDesigner)
-
-## Code Features:
-* Smoothed pointer movement using interpolation.
-* click recognition based on hand pose (index + middle finger clse together).
-* Zoom level control by measuring distance between both hands.
-* UDP data transmission of gestures states and zoom values to TouchDesigner.
-
-See code example in `VirtualMouse_GestureControl_v02.py` (add this as a file to your repo).
-
-## Diffusion Image Generation
-We used [TouchDiffusion](https://github.com/olegchomp/TouchDiffusion), a real-time implementation of Stable Diffusion in TouchDesigner.
-
-## Conditioning Strategy
-* Noise Map: The default randomness input.
-* Author-Controlled RGB Animation: A high contrast particle-based animation was used as a second conditioning map. This helped the model "preserve the structure" while allowing creative variation.
-* Gesture Input: Gestures sent via UDp dynamically transformed or influenced the diffusion parameters during runtime.
-
-![GIF_touchdesigner_01](https://github.com/user-attachments/assets/bed93029-cdb0-49a9-b77e-5a99084526bb)
-
-This conditioning approach allowed the diffusion model to maintain coherence with the structured reference (e.g., particle animations) while introducing stylistic variation bassed on the noise.
-
-![PXL_20250604_025615794 (1)](https://github.com/user-attachments/assets/8947c587-2d1f-42e7-8f1b-b48e33d15a3c)
-
-## Future Possibilities
-While The Microscopic was designed as a standalone installation, its architecture opens doors to future uses in:
-* Theater and Live Performance (gesture-driven control of VFX, lighting, sound)
-* Prototype testing for multimodal AI interaction
-* Creative gaming and memory-based physical interaction systems
-
-The combination of authored animations, structured prompts, and reactive gesture input makes this system ideal for immersive, performative applications!
-
-## Acknowledgments
-* [TouchDiffusion by @olegchomp](https://github.com/olegchomp/TouchDiffusion)
-* [cvzone](https://github.com/cvzone/cvzone)
-* OpenCV, autopy, and TouchDesigner community
-* [Paketa12 on Youtube](https://www.youtube.com/watch?v=w47xTWMNTFA&t)
-
-## Considerations:
-1. I'm running python version 3.8.0 because Mediapipe didn't seem to be running on later versions (at least for me).
-2. I'm using `TouchDiffusion` main version. I've tried to install the portable version but it simply won't run. Don't get discourage if either versions don't work properly at first. Reinstalling the main version seemed to work for me.
-3. The TouchDesigner file uploaded contains esential nodes for decoding coming data from OSC. However, I keep working on more recent versions for research purposes.
+Why It Matters
+The project demonstrates how AI-powered gesture recognition can serve as a practical bridge between the physical and digital worlds — enabling accessible, immersive, and hands-free control for presentations, interactive art installations, or accessibility-focused applications.
